@@ -15,96 +15,146 @@ export default function Profile() {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl bg-white p-5 shadow-sm md:p-8">
-        <div className="flex flex-col gap-1">
-          <h3 className="text-2xl font-bold text-slate-800">Hồ sơ</h3>
-          <p className="text-base text-slate-500">Quản lý thông tin cá nhân</p>
-        </div>
-
-        <div className="my-6 h-px w-full bg-slate-200" />
-
-        <div className="space-y-7">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-indigo-600 text-4xl font-semibold text-white">
-                  {avatarInitial}
-                </div>
-                <button
-                  type="button"
-                  className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-slate-800 text-sm text-white"
-                >
-                  📷
-                </button>
-              </div>
-              <div>
-                <p className="text-xl font-semibold text-slate-900">{userName}</p>
-                <p className="mt-1 text-xs font-medium uppercase tracking-wider text-slate-400">
-                  {personalInfo.memberSince}
-                </p>
-              </div>
-            </div>
-
-            <div className="w-full rounded-2xl bg-slate-50 p-4 lg:max-w-lg">
-              <p className="text-sm text-slate-500">
-                Ảnh đại diện giúp người khác dễ dàng nhận diện bạn trong các báo cáo và giao dịch
-                chung.
-              </p>
-            </div>
+      <section className="relative overflow-hidden rounded-[28px] bg-gradient-to-r from-slate-900 via-[#172a52] to-[#243f78] p-6 text-white shadow-sm md:p-8">
+        <div className="pointer-events-none absolute -right-12 top-0 h-48 w-48 rounded-full bg-indigo-400/20 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-16 left-1/2 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium text-indigo-100">Trung tâm quản lý tài khoản</p>
+            <h3 className="mt-3 text-2xl font-bold md:text-4xl">Welcome back, Thin</h3>
+            <p className="mt-3 text-base text-indigo-100 md:text-lg">
+              Quản lý hồ sơ, cài đặt bảo mật và hoạt động tài chính của bạn tại một nơi an toàn
+              duy nhất.
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <p className="mb-2 text-sm font-medium text-slate-700">Họ và Tên</p>
-              <div className="rounded-full bg-slate-100 px-5 py-3 text-slate-600">{userName}</div>
+          <div className="inline-flex w-full max-w-sm items-center gap-4 rounded-3xl bg-white/95 p-4 text-slate-900 shadow-sm">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-2xl font-bold text-white">
+              {avatarInitial}
             </div>
-            <div>
-              <p className="mb-2 text-sm font-medium text-slate-700">Email</p>
-              <div className="rounded-full bg-slate-100 px-5 py-3 text-slate-600">{userEmail}</div>
-            </div>
-            <div>
-              <p className="mb-2 text-sm font-medium text-slate-700">Số điện thoại</p>
-              <div className="rounded-full bg-slate-100 px-5 py-3 text-slate-600">
-                {personalInfo.phone}
-              </div>
-            </div>
-            <div>
-              <p className="mb-2 text-sm font-medium text-slate-700">Ngày sinh</p>
-              <div className="rounded-full bg-slate-100 px-5 py-3 text-slate-600">
-                {personalInfo.birthday}
-              </div>
-            </div>
-            <div className="md:col-span-2">
-              <p className="mb-2 text-sm font-medium text-slate-700">Địa chỉ</p>
-              <div className="rounded-full bg-slate-100 px-5 py-3 text-slate-600">
-                {personalInfo.address}
-              </div>
+            <div className="min-w-0">
+              <p className="truncate text-lg font-semibold">{userName}</p>
+              <p className="truncate text-sm text-slate-500">{userEmail}</p>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <section className="grid grid-cols-1 gap-5 xl:grid-cols-12">
+        <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-7">
+          <div className="pointer-events-none absolute -right-8 top-4 text-8xl opacity-20">👤</div>
+          <h4 className="text-2xl font-bold md:text-3xl">Thông tin cá nhân</h4>
+          <p className="mt-3 max-w-xl text-base text-slate-700 md:text-lg">
+            Cập nhật chi tiết hồ sơ, quản lý thông tin liên lạc và các tùy chọn cá nhân hóa tài
+            khoản của bạn
+          </p>
+          <div className="mt-5 grid grid-cols-1 gap-3 text-sm text-slate-700 md:grid-cols-2">
+            <div className="rounded-2xl bg-white/80 px-4 py-3">
+              <p className="text-slate-500">Họ và tên</p>
+              <p className="mt-1 font-semibold text-slate-900">{userName}</p>
+            </div>
+            <div className="rounded-2xl bg-white/80 px-4 py-3">
+              <p className="text-slate-500">Email</p>
+              <p className="mt-1 font-semibold text-slate-900">{userEmail}</p>
+            </div>
+            <div className="rounded-2xl bg-white/80 px-4 py-3">
+              <p className="text-slate-500">Số điện thoại</p>
+              <p className="mt-1 font-semibold text-slate-900">{personalInfo.phone}</p>
+            </div>
+            <div className="rounded-2xl bg-white/80 px-4 py-3">
+              <p className="text-slate-500">Ngày sinh</p>
+              <p className="mt-1 font-semibold text-slate-900">{personalInfo.birthday}</p>
+            </div>
+          </div>
+          <div className="mt-4 rounded-2xl bg-white/80 px-4 py-3 text-sm">
+            <p className="text-slate-500">Địa chỉ</p>
+            <p className="mt-1 font-semibold text-slate-900">{personalInfo.address}</p>
+          </div>
           <button
             type="button"
-            className="rounded-xl border border-red-200 bg-red-50 px-5 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
+            className="mt-5 text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
           >
-            Xóa Tài Khoản
+            Quản lý hồ sơ --&gt;
           </button>
-          <div className="flex flex-col gap-3 sm:flex-row">
+        </article>
+
+        <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-5">
+          <div className="pointer-events-none absolute -right-6 top-3 text-8xl opacity-20">🔐</div>
+          <h4 className="text-2xl font-bold md:text-3xl">Bảo mật tài khoản</h4>
+          <p className="mt-3 max-w-xl text-base text-slate-700 md:text-lg">
+            Thiết lập 2FA, đổi mật khẩu và xem các thiết bị đã đăng nhập gần đây.
+          </p>
+          <button
+            type="button"
+            className="mt-6 text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
+          >
+            Kiểm tra trạng thái &gt;
+          </button>
+        </article>
+
+        <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-5">
+          <div className="pointer-events-none absolute -right-8 top-4 text-8xl opacity-20">🔔</div>
+          <h4 className="text-2xl font-bold md:text-3xl">Tùy chọn thông báo</h4>
+          <p className="mt-3 max-w-xl text-base text-slate-700 md:text-lg">
+            Quản lý cách chúng tôi liên lạc với bạn về giao dịch, bảo mật và khuyến mãi.
+          </p>
+          <button
+            type="button"
+            className="mt-6 text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
+          >
+            Đặt cảnh báo &gt;
+          </button>
+        </article>
+
+        <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-7">
+          <div className="pointer-events-none absolute -right-8 top-4 text-8xl opacity-20">📊</div>
+          <h4 className="text-2xl font-bold md:text-3xl">Thống kê hoạt động</h4>
+          <p className="mt-3 max-w-2xl text-base text-slate-700 md:text-lg">
+            Xem phân tích chi tiết về chi tiêu và tăng trưởng tài sản của bạn trong tháng này.
+          </p>
+          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+            <div className="rounded-2xl bg-white/80 p-4">
+              <p className="text-xs font-medium text-slate-500">Giao dịch tháng này</p>
+              <p className="mt-2 text-xl font-bold text-slate-900">186</p>
+            </div>
+            <div className="rounded-2xl bg-white/80 p-4">
+              <p className="text-xs font-medium text-slate-500">Tiết kiệm ròng</p>
+              <p className="mt-2 text-xl font-bold text-emerald-600">+18%</p>
+            </div>
+            <div className="rounded-2xl bg-white/80 p-4">
+              <p className="text-xs font-medium text-slate-500">Danh mục hoạt động</p>
+              <p className="mt-2 text-xl font-bold text-slate-900">12</p>
+            </div>
+            <div className="rounded-2xl bg-white/80 p-4">
+              <p className="text-xs font-medium text-slate-500">Mục tiêu hoàn thành</p>
+              <p className="mt-2 text-xl font-bold text-indigo-600">72%</p>
+            </div>
+          </div>
+        </article>
+
+        <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-12">
+          <div className="pointer-events-none absolute -right-8 top-4 text-8xl opacity-20">⚙️</div>
+          <h4 className="text-2xl font-bold md:text-3xl">Hành động tài khoản</h4>
+          <p className="mt-3 max-w-2xl text-base text-slate-700 md:text-lg">
+            Đóng tài khoản, xuất dữ liệu hoặc chuyển đổi tài khoản
+          </p>
+          <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+            {personalInfo.memberSince}
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
             <button
               type="button"
-              className="rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
             >
-              Hủy Bỏ
+              Xuất dữ liệu
             </button>
             <button
               type="button"
               className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
             >
-              Lưu Thay Đổi
+              Đăng xuất
             </button>
           </div>
-        </div>
+        </article>
       </section>
     </div>
   );
