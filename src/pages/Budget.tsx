@@ -9,6 +9,8 @@ type BudgetItem = {
 export default function Budget() {
   const [category, setCategory] = useState("");
   const [amount, setAmount] = useState("");
+
+  
   const [budgets, setBudgets] = useState<BudgetItem[]>([
     { id: 1, category: "Tiêu dùng hàng ngày", amount: 1200000 },
     { id: 2, category: "Giải trí", amount: 800000 },
