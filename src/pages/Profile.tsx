@@ -1,12 +1,4 @@
-import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
-
-const personalInfo = {
-  phone: "+84 862 861 730",
-  birthday: "26 / 07 / 2004",
-  address: "123 Phố Huế, Hai Bà Trưng, Hà Nội",
-  memberSince: "THÀNH VIÊN TỪ THÁNG 4, 2026",
-};
 
 export default function Profile() {
   const { currentUser } = useApp();
@@ -31,10 +23,12 @@ export default function Profile() {
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-3xl bg-white p-6 shadow-sm">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-indigo-600 text-2xl font-bold text-white">D</div>
+            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-indigo-600 text-2xl font-bold text-white">
+              {avatarInitial}
+            </div>
             <div>
-              <p className="text-lg font-semibold text-slate-900">Demo User</p>
-              <p className="mt-1 text-sm text-slate-500">demo@gmail.com</p>
+              <p className="text-lg font-semibold text-slate-900">{userName}</p>
+              <p className="mt-1 text-sm text-slate-500">{userEmail}</p>
             </div>
           </div>
 
