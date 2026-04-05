@@ -7,6 +7,8 @@ import Budget from "./pages/Budget";
 import Categories from "./pages/Categories";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import AccountSecurity from "./pages/AccountSecurity";
+import NotificationPreferences from "./pages/NotificationPreferences";
 import PersonalInfo from "./pages/PersonalInfo";
 import Profile from "./pages/Profile";
 import Reports from "./pages/Reports";
@@ -45,6 +47,8 @@ export default function App() {
               <Route path="/reports" element={<Reports />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/personal-info" element={<PersonalInfo />} />
+              <Route path="/profile/security" element={<AccountSecurity />} />
+              <Route path="/profile/notifications" element={<NotificationPreferences />} />
             </Route>
           </Route>
 

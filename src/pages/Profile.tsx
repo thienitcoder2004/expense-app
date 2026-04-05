@@ -84,12 +84,12 @@ export default function Profile() {
           <p className="mt-3 max-w-xl text-base text-slate-700 md:text-lg">
             Thiết lập 2FA, đổi mật khẩu và xem các thiết bị đã đăng nhập gần đây.
           </p>
-          <button
-            type="button"
-            className="mt-6 text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
+          <Link
+            to="/profile/security"
+            className="mt-6 inline-flex text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
           >
             Kiểm tra trạng thái &gt;
-          </button>
+          </Link>
         </article>
 
         <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-5">
@@ -98,12 +98,12 @@ export default function Profile() {
           <p className="mt-3 max-w-xl text-base text-slate-700 md:text-lg">
             Quản lý cách chúng tôi liên lạc với bạn về giao dịch, bảo mật và khuyến mãi.
           </p>
-          <button
-            type="button"
-            className="mt-6 text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
+          <Link
+            to="/profile/notifications"
+            className="mt-6 inline-flex text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
           >
             Đặt cảnh báo &gt;
-          </button>
+          </Link>
         </article>
 
         <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-7">
