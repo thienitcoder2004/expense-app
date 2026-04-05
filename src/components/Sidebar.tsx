@@ -6,7 +6,10 @@ const navItems = [
   { to: "/categories", label: "Danh mục", icon: "🗂️" },
   { to: "/budget", label: "Ngân sách", icon: "🎯" },
   { to: "/profile", label: "Hồ sơ", icon: "👤" },
+<<<<<<< HEAD
   { to: "/reports", label: "Báo cáo thống kê", icon: "🗂️"}
+=======
+>>>>>>> 67cdbdd2acd12b153350e5c15471527fac54af84
 ];
 
 export default function Sidebar() {
