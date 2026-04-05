@@ -1,10 +1,8 @@
-import { useMemo, useState } from "react";
-
-type BudgetItem = {
-  id: number;
-  category: string;
-  amount: number;
-};
+const budgetItems = [
+  { title: "Mua sắm", spent: 4300, limit: 5000, color: "bg-indigo-600" },
+  { title: "Du lịch", spent: 1850, limit: 2500, color: "bg-emerald-600" },
+  { title: "Ăn uống", spent: 1020, limit: 1500, color: "bg-sky-600" },
+];
 
 export default function Budget() {
   const [category, setCategory] = useState("");
@@ -42,104 +40,67 @@ export default function Budget() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <section className="rounded-3xl bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Ngân sách</h3>
-            <p className="mt-2 text-slate-600">Thiết lập và theo dõi ngân sách của bạn.</p>
+            <h3 className="text-lg font-semibold text-slate-900">Ngân sách</h3>
+            <p className="mt-2 text-sm text-slate-500">Thiết lập và theo dõi chi tiêu theo kế hoạch.</p>
           </div>
-          <div className="rounded-3xl bg-slate-50 px-5 py-4 text-right shadow-sm sm:text-left">
-            <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
-              Tổng ngân sách
-            </p>
-            <p className="mt-2 text-3xl font-semibold text-slate-900">
-              {totalBudget.toLocaleString("vi-VN", {
-                style: "currency",
-                currency: "VND",
-                maximumFractionDigits: 0,
-              })}
-            </p>
-          </div>
+          <button className="rounded-3xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">
+            Tạo ngân sách mới
+          </button>
         </div>
+      </section>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-slate-700">Tạo ngân sách mới</p>
-                <p className="mt-1 text-sm text-slate-500">Thêm nhóm chi tiêu và ngân sách tương ứng.</p>
+      <section className="grid gap-6 xl:grid-cols-2">
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <h4 className="text-base font-semibold text-slate-900">Tổng quan ngân sách</h4>
+          <div className="mt-5 space-y-5">
+            <div className="rounded-3xl bg-slate-50 p-5">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-500">Ngân sách tháng này</p>
+                <p className="text-sm font-semibold text-slate-900">$9,000</p>
               </div>
-              <div className="rounded-2xl bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm">
-                {budgets.length} mục
+              <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-full w-[94%] rounded-full bg-indigo-600" />
               </div>
+              <p className="mt-3 text-sm text-slate-600">94% đã được sử dụng.</p>
             </div>
 
-            <form className="mt-6 space-y-4" onSubmit={handleAddBudget}>
-              <label className="block text-sm font-medium text-slate-700">
-                Danh mục
-                <input
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  value={category}
-                  onChange={(event) => setCategory(event.target.value)}
-                  placeholder="Ví dụ: Ăn uống"
-                />
-              </label>
-
-              <label className="block text-sm font-medium text-slate-700">
-                Số tiền (VND)
-                <input
-                  type="number"
-                  min="0"
-                  className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-                  value={amount}
-                  onChange={(event) => setAmount(event.target.value)}
-                  placeholder="1.000.000"
-                />
-              </label>
-
-              <button
-                type="submit"
-                className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200"
-              >
-                Thêm ngân sách
-              </button>
-            </form>
-          </div>
-
-          <div className="rounded-3xl border border-slate-200 bg-white p-6">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-slate-700">Nhóm chi tiêu</p>
-                <p className="mt-1 text-sm text-slate-500">Xem tổng quan từng mục ngân sách.</p>
-              </div>
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                Cập nhật vừa phải
-              </span>
-            </div>
-
-            <div className="mt-6 space-y-4 max-h-[320px] overflow-y-auto pr-1">
-              {budgets.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4"
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800">{item.category}</p>
-                    <p className="mt-1 text-sm text-slate-500">Ngân sách giới hạn</p>
+            {budgetItems.map((item) => {
+              const percent = Math.round((item.spent / item.limit) * 100);
+              return (
+                <div key={item.title} className="rounded-3xl bg-slate-50 p-5">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{item.title}</p>
+                      <p className="mt-1 text-xs text-slate-500">{item.spent} / {item.limit} USD</p>
+                    </div>
+                    <span className="text-sm font-semibold text-slate-900">{percent}%</span>
                   </div>
-                  <p className="text-sm font-semibold text-slate-900">
-                    {item.amount.toLocaleString("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                      maximumFractionDigits: 0,
-                    })}
-                  </p>
+                  <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
+                    <div className={`h-full rounded-full ${item.color}`} style={{ width: `${percent}%` }} />
+                  </div>
                 </div>
-              ))}
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="rounded-3xl bg-white p-6 shadow-sm">
+          <h4 className="text-base font-semibold text-slate-900">Lời khuyên tiết kiệm</h4>
+          <div className="mt-5 space-y-4">
+            <div className="rounded-3xl bg-indigo-50 p-5">
+              <p className="text-sm font-semibold text-indigo-700">Giảm ăn ngoài</p>
+              <p className="mt-2 text-sm text-slate-600">Giảm 12% chi tiêu ăn uống và chuyển vào quỹ tiết kiệm.</p>
+            </div>
+            <div className="rounded-3xl bg-slate-50 p-5">
+              <p className="text-sm font-semibold text-slate-900">Tăng dự phòng</p>
+              <p className="mt-2 text-sm text-slate-600">Tạo mục tiêu dự phòng 3 tháng cho chi phí cố định.</p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
