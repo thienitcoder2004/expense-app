@@ -10,7 +10,7 @@ export default function Reports() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h2 className="text-2xl font-bold text-slate-800">
-            Báo cáo & Phân tích
+            Báo cáo Phân tích
           </h2>
           <p className="text-slate-500">
             Theo dõi chi tiêu và tài chính của bạn
@@ -61,9 +61,7 @@ export default function Reports() {
 
         {/* THU THEO NGUỒN */}
         <div className="rounded-3xl bg-white p-6 shadow-sm">
-          <h3 className="font-semibold text-slate-800 mb-4">
-            Thu theo nguồn
-          </h3>
+          <h3 className="font-semibold text-slate-800 mb-4">Thu theo nguồn</h3>
 
           <div className="space-y-3">
             <Progress label="Lương" percent={70} color="bg-green-500" />
@@ -133,11 +131,7 @@ function Card({ title, value, icon }: any) {
   );
 }
 
-function Progress({
-  label,
-  percent,
-  color = "bg-indigo-500",
-}: any) {
+function Progress({ label, percent, color = "bg-indigo-500" }: any) {
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
@@ -176,14 +170,8 @@ function Compare({ label, current, prev, up }: any) {
     <div className="rounded-xl bg-slate-50 p-4">
       <p className="text-sm text-slate-500">{label}</p>
       <h4 className="text-lg font-bold">{current}</h4>
-      <p className="text-xs text-slate-400">
-        Tháng trước: {prev}
-      </p>
-      <p
-        className={`text-sm mt-1 ${
-          up ? "text-green-500" : "text-red-500"
-        }`}
-      >
+      <p className="text-xs text-slate-400">Tháng trước: {prev}</p>
+      <p className={`text-sm mt-1 ${up ? "text-green-500" : "text-red-500"}`}>
         {up ? "▲ Tăng" : "▼ Giảm"}
       </p>
     </div>
