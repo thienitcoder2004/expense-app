@@ -7,6 +7,7 @@ import Budget from "./pages/Budget";
 import Categories from "./pages/Categories";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import PersonalInfo from "./pages/PersonalInfo";
 import Profile from "./pages/Profile";
 import Reports from "./pages/Reports";
 import Transactions from "./pages/Transactions";
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="/budget" element={<Budget />} />
               <Route path="/reports" element={<Reports />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/personal-info" element={<PersonalInfo />} />
             </Route>
           </Route>
 

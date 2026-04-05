@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useApp } from "../context/AppContext";
 
 const personalInfo = {
@@ -69,12 +70,12 @@ export default function Profile() {
             <p className="text-slate-500">Địa chỉ</p>
             <p className="mt-1 font-semibold text-slate-900">{personalInfo.address}</p>
           </div>
-          <button
-            type="button"
-            className="mt-5 text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
+          <Link
+            to="/profile/personal-info"
+            className="mt-5 inline-flex text-base font-semibold text-indigo-700 transition hover:text-indigo-800"
           >
-            Quản lý hồ sơ --&gt;
-          </button>
+            Quản lý hồ sơ →
+          </Link>
         </article>
 
         <article className="relative overflow-hidden rounded-[28px] bg-[#ebe9e9] p-6 text-slate-900 xl:col-span-5">
