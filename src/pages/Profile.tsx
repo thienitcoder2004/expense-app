@@ -1,4 +1,19 @@
+import { Link } from "react-router-dom";
+import { useApp } from "../context/AppContext";
+
+const personalInfo = {
+  phone: "+84 862 861 730",
+  birthday: "26 / 07 / 2004",
+  address: "123 Phố Huế, Hai Bà Trưng, Hà Nội",
+  memberSince: "THÀNH VIÊN TỪ THÁNG 4, 2026",
+};
+
 export default function Profile() {
+  const { currentUser } = useApp();
+  const userName = currentUser?.name ?? "Demo User";
+  const userEmail = currentUser?.email ?? "demo@gmail.com";
+  const avatarInitial = userName.charAt(0).toUpperCase();
+
   return (
     <div className="space-y-6">
       <section className="rounded-3xl bg-white p-6 shadow-sm">

@@ -1,4 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import { useApp } from "../context/AppContext";
+
 export default function Login() {
+  const navigate = useNavigate();
+  const { login } = useApp();
+
+  const handleLogin = () => {
+    // Giả lập việc đăng nhập thành công
+    login({ name: "Demo User", email: "demo@example.com" });
+    navigate("/");
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4 py-10 text-slate-900">
       <div className="w-full max-w-md rounded-[2rem] bg-white p-8 shadow-xl shadow-slate-200">

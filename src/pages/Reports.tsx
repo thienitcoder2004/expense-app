@@ -1,4 +1,10 @@
+
+import { useState } from "react";
+import { ArrowUp, ArrowDown, Download } from "lucide-react";
+
 export default function Reports() {
+  const [range, setRange] = useState("Tháng này");
+
   return (
     <div className="space-y-6">
       <section className="rounded-3xl bg-white p-6 shadow-sm">
@@ -44,6 +50,82 @@ export default function Reports() {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+
+/* COMPONENTS */
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function Card({ title, value, icon }: any) {
+  return (
+    <div className="rounded-3xl bg-white p-6 shadow-sm">
+      <p className="text-slate-500 text-sm">{title}</p>
+      <div className="flex items-center justify-between mt-2">
+        <h3 className="text-xl font-bold text-slate-800">{value}</h3>
+        {icon === "up" && <ArrowUp className="text-green-500" />}
+        {icon === "down" && <ArrowDown className="text-red-500" />}
+      </div>
+    </div>
+  );
+}
+
+function Progress({
+  label,
+  percent,
+  color = "bg-indigo-500",
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: any) {
+  return (
+    <div>
+      <div className="flex justify-between text-sm mb-1">
+        <span>{label}</span>
+        <span>{percent}%</span>
+      </div>
+      <div className="h-2 bg-slate-200 rounded-full">
+        <div
+          className={`h-2 rounded-full ${color}`}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function Transaction({ name, amount }: any) {
+  return (
+    <div className="flex justify-between items-center border-b pb-2">
+      <span>{name}</span>
+      <span
+        className={
+          amount.startsWith("-")
+            ? "text-red-500 font-semibold"
+            : "text-green-500 font-semibold"
+        }
+      >
+        {amount}
+      </span>
+    </div>
+  );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function Compare({ label, current, prev, up }: any) {
+  return (
+    <div className="rounded-xl bg-slate-50 p-4">
+      <p className="text-sm text-slate-500">{label}</p>
+      <h4 className="text-lg font-bold">{current}</h4>
+      <p className="text-xs text-slate-400">
+        Tháng trước: {prev}
+      </p>
+      <p
+        className={`text-sm mt-1 ${
+          up ? "text-green-500" : "text-red-500"
+        }`}
+      >
+        {up ? "▲ Tăng" : "▼ Giảm"}
+      </p>
     </div>
   );
 }

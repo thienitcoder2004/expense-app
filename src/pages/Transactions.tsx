@@ -6,6 +6,195 @@ const sampleTransactions = [
 ];
 
 export default function Transactions() {
+  // State quản lý dữ liệu
+  const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
+  const [categories, setCategories] = useState<Category[]>(CATEGORIES);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
+
+  // State Bộ lọc nâng cao
+  const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false);
+  const [filterDateRange, setFilterDateRange] = useState({ start: "", end: "" });
+  const [filterAmountRange, setFilterAmountRange] = useState({ min: 0, max: 0 });
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // State cho form danh mục mới
+  const [newCategoryData, setNewCategoryData] = useState({
+    name: "",
+    icon: "📦",
+    color: "bg-slate-100 text-slate-600",
+  });
+
+  // State cho form giao dịch
+  const [formData, setFormData] = useState({
+    description: "",
+    amount: 0,
+    type: "expense" as TransactionType,
+    categoryId: CATEGORIES[0].id,
+    date: new Date().toISOString().split("T")[0],
+  });
+
+  // Mô phỏng loading ban đầu
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Reset trang khi bộ lọc thay đổi
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCurrentPage(1);
+  }, [searchTerm, typeFilter]);
+
+  // Helper: hiển thị toast
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  // Helper: định dạng tiền tệ
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+  };
+
+  // Lấy thông tin danh mục theo id
+  const getCategory = (id: string) => categories.find((c) => c.id === id) || categories[categories.length - 1];
+
+  // Tính tổng thu, chi, số dư
+  const summary = useMemo(() => {
+    return transactions.reduce(
+      (acc, t) => {
+        if (t.type === "income") acc.income += t.amount;
+        else acc.expense += t.amount;
+        return acc;
+      },
+      { income: 0, expense: 0 }
+    );
+  }, [transactions]);
+
+  // Lọc giao dịch theo nhiều điều kiện
+  const filteredTransactions = useMemo(() => {
+    return transactions
+      .filter((t) => {
+        const matchesSearch = t.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesType = typeFilter === "all" || t.type === typeFilter;
+        
+        // Lọc theo ngày
+        const matchesStartDate = !filterDateRange.start || new Date(t.date) >= new Date(filterDateRange.start);
+        const matchesEndDate = !filterDateRange.end || new Date(t.date) <= new Date(filterDateRange.end);
+        
+        // Lọc theo số tiền
+        const matchesMinAmount = !filterAmountRange.min || t.amount >= filterAmountRange.min;
+        const matchesMaxAmount = !filterAmountRange.max || t.amount <= filterAmountRange.max;
+
+        return matchesSearch && matchesType && matchesStartDate && matchesEndDate && matchesMinAmount && matchesMaxAmount;
+      })
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions, searchTerm, typeFilter, filterDateRange, filterAmountRange]);
+
+  // Phân trang
+  const paginatedTransactions = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredTransactions.slice(start, start + itemsPerPage);
+  }, [filteredTransactions, currentPage]);
+
+  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+
+  // Mở form thêm mới
+  const handleOpenAddForm = () => {
+    setEditingTransaction(null);
+    setFormData({
+      description: "",
+      amount: 0,
+      type: "expense",
+      categoryId: CATEGORIES[0].id,
+      date: new Date().toISOString().split("T")[0],
+    });
+    setIsFormOpen(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Mở form chỉnh sửa
+  const handleOpenEditForm = (transaction: Transaction) => {
+    setEditingTransaction(transaction);
+    setFormData({
+      description: transaction.description,
+      amount: transaction.amount,
+      type: transaction.type,
+      categoryId: transaction.categoryId,
+      date: transaction.date,
+    });
+    setIsFormOpen(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Xóa giao dịch
+  const handleDelete = (id: string) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) {
+      setTransactions(transactions.filter((t) => t.id !== id));
+      showToast("Đã xóa giao dịch", "success");
+    }
+  };
+
+  // Lưu (thêm mới hoặc cập nhật)
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.description.trim()) {
+      showToast("Vui lòng nhập mô tả giao dịch", "error");
+      return;
+    }
+    if (formData.amount <= 0) {
+      showToast("Số tiền phải lớn hơn 0", "error");
+      return;
+    }
+
+    if (editingTransaction) {
+      // Cập nhật
+      setTransactions(
+        transactions.map((t) =>
+          t.id === editingTransaction.id
+            ? { ...t, ...formData }
+            : t
+        )
+      );
+      showToast("Đã cập nhật giao dịch", "success");
+    } else {
+      // Thêm mới
+      const newTransaction: Transaction = {
+        ...formData,
+        id: Math.random().toString(36).substr(2, 9),
+        idCode: `TR-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+        user: { name: "Hải", avatar: "H" },
+      };
+      setTransactions([newTransaction, ...transactions]);
+      showToast("Đã thêm giao dịch mới", "success");
+    }
+    setIsFormOpen(false);
+    setEditingTransaction(null);
+  };
+
+  // Thêm danh mục mới
+  const handleAddCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCategoryData.name.trim()) return;
+    const newCat: Category = {
+      id: "cat-" + Math.random().toString(36).substr(2, 5),
+      ...newCategoryData,
+    };
+    setCategories([...categories, newCat]);
+    setFormData({ ...formData, categoryId: newCat.id });
+    setIsCategoryFormOpen(false);
+    setNewCategoryData({ name: "", icon: "📦", color: "bg-slate-100 text-slate-600" });
+    showToast("Đã thêm danh mục mới", "success");
+  };
+
   return (
     <div className="space-y-6">
       <section className="rounded-3xl bg-white p-6 shadow-sm">

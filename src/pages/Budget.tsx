@@ -5,6 +5,39 @@ const budgetItems = [
 ];
 
 export default function Budget() {
+  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
+
+  
+  const [budgets, setBudgets] = useState<BudgetItem[]>([
+    { id: 1, category: "Tiêu dùng hàng ngày", amount: 1200000 },
+    { id: 2, category: "Giải trí", amount: 800000 },
+  ]);
+
+  const totalBudget = useMemo(
+    () => budgets.reduce((sum, item) => sum + item.amount, 0),
+    [budgets]
+  );
+
+  const handleAddBudget = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const parsedAmount = Number(amount);
+    if (!category.trim() || Number.isNaN(parsedAmount) || parsedAmount <= 0) {
+      return;
+    }
+
+    const newBudget: BudgetItem = {
+      id: Date.now(),
+      category: category.trim(),
+      amount: parsedAmount,
+    };
+
+    setBudgets((current) => [newBudget, ...current]);
+    setCategory("");
+    setAmount("");
+  };
+
   return (
     <div className="space-y-6">
       <section className="rounded-3xl bg-white p-6 shadow-sm">

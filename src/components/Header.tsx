@@ -8,6 +8,9 @@ const titleMap: Record<string, string> = {
   "/budget": "Quản lý ngân sách",
   "/reports": "Báo cáo thống kê",
   "/profile": "Thông tin cá nhân",
+  "/profile/personal-info": "Thông tin cá nhân",
+  "/profile/security": "Bảo mật tài khoản",
+  "/profile/notifications": "Tùy chọn thông báo",
 };
 
 export default function Header() {

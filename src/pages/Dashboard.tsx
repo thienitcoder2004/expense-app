@@ -1,4 +1,8 @@
+import { useApp } from "../context/AppContext";
+
 export default function Dashboard() {
+  const { balance } = useApp();
+
   return (
     <div className="space-y-6 max-w-[1480px] mx-auto">
       <section className="rounded-3xl bg-white p-6 shadow-sm">
@@ -125,5 +129,6 @@ export default function Dashboard() {
       </div>
     </div>
   );
+
 }
 
