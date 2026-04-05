@@ -6,56 +6,20 @@ type User = {
   email: string;
 };
 
-type Transaction = {
-  id: number;
-  title: string;
-  amount: number;
-};
-
 type AppContextType = {
   currentUser: User | null;
-  transactions: Transaction[];
-  addTransaction: (t: Omit<Transaction, "id">) => void;
-  balance: number;
-  login: (user: User) => void;
-  logout: () => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export default function AppProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    { id: 1, title: "Ăn uống", amount: -100000 },
-    { id: 2, title: "Lương", amount: 5000000 },
-  ]);
-
-  const addTransaction = (t: Omit<Transaction, "id">) => {
-    setTransactions([...transactions, { ...t, id: Date.now() }]);
-  };
-
-  const balance = transactions.reduce((acc, t) => acc + t.amount, 0);
-
-  const login = (user: User) => {
-    setCurrentUser(user);
-  };
-
-  const logout = () => {
-    setCurrentUser(null);
-  };
+  const [currentUser] = useState<User | null>({
+    name: "Demo User",
+    email: "demo@gmail.com",
+  });
 
   return (
-    <AppContext.Provider
-      value={{
-        currentUser,
-        transactions,
-        addTransaction,
-        balance,
-        login,
-        logout,
-      }}
-    >
+    <AppContext.Provider value={{ currentUser }}>
       {children}
     </AppContext.Provider>
   );
