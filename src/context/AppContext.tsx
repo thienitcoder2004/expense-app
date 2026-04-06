@@ -1,4 +1,4 @@
-/* eslint-disable react-refresh/only-export-components */
+{/* eslint-disable react-refresh/only-export-components */}
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 type User = {
@@ -8,18 +8,27 @@ type User = {
 
 type AppContextType = {
   currentUser: User | null;
+  balance: number;
+  login: (user: User) => void;
+  logout: () => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export default function AppProvider({ children }: { children: ReactNode }) {
-  const [currentUser] = useState<User | null>({
-    name: "Demo User",
-    email: "demo@gmail.com",
-  });
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [balance] = useState<number>(1250000);
+
+  const login = (user: User) => {
+    setCurrentUser(user);
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+  };
 
   return (
-    <AppContext.Provider value={{ currentUser }}>
+    <AppContext.Provider value={{ currentUser, balance, login, logout }}>
       {children}
     </AppContext.Provider>
   );

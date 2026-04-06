@@ -1,16 +1,15 @@
-import { useState, useMemo, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-// ==================== KIỂU DỮ LIỆU ====================
 type TransactionType = "income" | "expense";
 
-interface Category {
+type Category = {
   id: string;
   name: string;
   icon: string;
   color: string;
-}
+};
 
-interface Transaction {
+type Transaction = {
   id: string;
   idCode: string;
   description: string;
@@ -22,92 +21,87 @@ interface Transaction {
     name: string;
     avatar: string;
   };
-}
+};
 
-// Danh mục có sẵn
 const CATEGORIES: Category[] = [
-  { id: "cat1", name: "Ăn uống", icon: "🍱", color: "bg-orange-100 text-orange-600" },
-  { id: "cat2", name: "Di chuyển", icon: "🚗", color: "bg-blue-100 text-blue-600" },
-  { id: "cat3", name: "Mua sắm", icon: "🛍️", color: "bg-pink-100 text-pink-600" },
-  { id: "cat4", name: "Giải trí", icon: "🎬", color: "bg-purple-100 text-purple-600" },
-  { id: "cat5", name: "Lương", icon: "💰", color: "bg-green-100 text-green-600" },
-  { id: "cat6", name: "Khác", icon: "📦", color: "bg-slate-100 text-slate-600" },
+  { id: "cat-1", name: "Ăn uống", icon: "🍔", color: "bg-orange-100 text-orange-600" },
+  { id: "cat-2", name: "Di chuyển", icon: "🚕", color: "bg-sky-100 text-sky-600" },
+  { id: "cat-3", name: "Mua sắm", icon: "🛍️", color: "bg-pink-100 text-pink-600" },
+  { id: "cat-4", name: "Lương", icon: "💼", color: "bg-emerald-100 text-emerald-600" },
+  { id: "cat-5", name: "Khác", icon: "📦", color: "bg-slate-100 text-slate-600" },
 ];
 
-// Dữ liệu mẫu ban đầu
 const INITIAL_TRANSACTIONS: Transaction[] = [
   {
-    id: "1",
-    idCode: "TR-2024-001",
-    description: "Ăn trưa với đồng nghiệp",
-    amount: 50000,
+    id: "tr-1",
+    idCode: "TR-2026-101",
+    description: "Ăn trưa văn phòng",
+    amount: 85000,
     type: "expense",
-    categoryId: "cat1",
-    date: "2024-03-20",
+    categoryId: "cat-1",
+    date: "2026-04-05",
     user: { name: "Hải", avatar: "H" },
   },
   {
-    id: "2",
-    idCode: "TR-2024-002",
-    description: "Đổ xăng xe máy",
-    amount: 100000,
-    type: "expense",
-    categoryId: "cat2",
-    date: "2024-03-19",
-    user: { name: "Hải", avatar: "H" },
-  },
-  {
-    id: "3",
-    idCode: "TR-2024-003",
-    description: "Lương tháng 3",
-    amount: 15000000,
-    type: "income",
-    categoryId: "cat5",
-    date: "2024-03-15",
-    user: { name: "Hải", avatar: "H" },
-  },
-  {
-    id: "4",
-    idCode: "TR-2024-004",
-    description: "Mua sắm quần áo",
-    amount: 300000,
-    type: "expense",
-    categoryId: "cat3",
-    date: "2024-03-18",
-    user: { name: "Hải", avatar: "H" },
-  },
-  {
-    id: "5",
-    idCode: "TR-2024-005",
-    description: "Xem phim rạp",
+    id: "tr-2",
+    idCode: "TR-2026-102",
+    description: "Đổ xăng",
     amount: 120000,
     type: "expense",
-    categoryId: "cat4",
-    date: "2024-03-17",
+    categoryId: "cat-2",
+    date: "2026-04-04",
     user: { name: "Hải", avatar: "H" },
   },
   {
-    id: "6",
-    idCode: "TR-2024-006",
-    description: "Làm thêm freelance",
-    amount: 2000000,
+    id: "tr-3",
+    idCode: "TR-2026-103",
+    description: "Lương part-time",
+    amount: 3500000,
     type: "income",
-    categoryId: "cat6",
-    date: "2024-03-16",
+    categoryId: "cat-4",
+    date: "2026-04-03",
+    user: { name: "Hải", avatar: "H" },
+  },
+  {
+    id: "tr-4",
+    idCode: "TR-2026-104",
+    description: "Mua áo mới",
+    amount: 290000,
+    type: "expense",
+    categoryId: "cat-3",
+    date: "2026-04-02",
+    user: { name: "Hải", avatar: "H" },
+  },
+  {
+    id: "tr-5",
+    idCode: "TR-2026-105",
+    description: "Freelance UI",
+    amount: 1800000,
+    type: "income",
+    categoryId: "cat-5",
+    date: "2026-04-01",
+    user: { name: "Hải", avatar: "H" },
+  },
+  {
+    id: "tr-6",
+    idCode: "TR-2026-106",
+    description: "Cafe cuối tuần",
+    amount: 45000,
+    type: "expense",
+    categoryId: "cat-1",
+    date: "2026-03-31",
     user: { name: "Hải", avatar: "H" },
   },
 ];
 
-// ==================== COMPONENT CHÍNH ====================
 export default function Transactions() {
-  // State quản lý dữ liệu
   const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
   const [categories, setCategories] = useState<Category[]>(CATEGORIES);
   const [isLoading, setIsLoading] = useState(true);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
 
-  // State Bộ lọc nâng cao
   const [isAdvancedFilterOpen, setIsAdvancedFilterOpen] = useState(false);
   const [filterDateRange, setFilterDateRange] = useState({ start: "", end: "" });
   const [filterAmountRange, setFilterAmountRange] = useState({ min: 0, max: 0 });
@@ -115,18 +109,18 @@ export default function Transactions() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCategoryFormOpen, setIsCategoryFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // State cho form danh mục mới
   const [newCategoryData, setNewCategoryData] = useState({
     name: "",
     icon: "📦",
     color: "bg-slate-100 text-slate-600",
   });
 
-  // State cho form giao dịch
   const [formData, setFormData] = useState({
     description: "",
     amount: 0,
@@ -135,33 +129,32 @@ export default function Transactions() {
     date: new Date().toISOString().split("T")[0],
   });
 
-  // Mô phỏng loading ban đầu
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
+    const timer = setTimeout(() => setIsLoading(false), 600);
     return () => clearTimeout(timer);
   }, []);
 
-  // Reset trang khi bộ lọc thay đổi
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentPage(1);
-  }, [searchTerm, typeFilter]);
+  }, [searchTerm, typeFilter, filterDateRange, filterAmountRange]);
 
-  // Helper: hiển thị toast
   const showToast = (message: string, type: "success" | "error" = "success") => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Helper: định dạng tiền tệ
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(amount);
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(amount);
   };
 
-  // Lấy thông tin danh mục theo id
-  const getCategory = (id: string) => categories.find((c) => c.id === id) || categories[categories.length - 1];
+  const getCategory = (id: string) => {
+    return categories.find((c: Category) => c.id === id) || categories[categories.length - 1];
+  };
 
-  // Tính tổng thu, chi, số dư
   const summary = useMemo(() => {
     return transactions.reduce(
       (acc, t) => {
@@ -173,49 +166,65 @@ export default function Transactions() {
     );
   }, [transactions]);
 
-  // Lọc giao dịch theo nhiều điều kiện
   const filteredTransactions = useMemo(() => {
     return transactions
       .filter((t) => {
-        const matchesSearch = t.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesType = typeFilter === "all" || t.type === typeFilter;
-        
-        // Lọc theo ngày
-        const matchesStartDate = !filterDateRange.start || new Date(t.date) >= new Date(filterDateRange.start);
-        const matchesEndDate = !filterDateRange.end || new Date(t.date) <= new Date(filterDateRange.end);
-        
-        // Lọc theo số tiền
-        const matchesMinAmount = !filterAmountRange.min || t.amount >= filterAmountRange.min;
-        const matchesMaxAmount = !filterAmountRange.max || t.amount <= filterAmountRange.max;
+        const matchesSearch =
+          t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          t.idCode.toLowerCase().includes(searchTerm.toLowerCase());
 
-        return matchesSearch && matchesType && matchesStartDate && matchesEndDate && matchesMinAmount && matchesMaxAmount;
+        const matchesType = typeFilter === "all" || t.type === typeFilter;
+
+        const matchesStartDate =
+          !filterDateRange.start || new Date(t.date) >= new Date(filterDateRange.start);
+
+        const matchesEndDate =
+          !filterDateRange.end || new Date(t.date) <= new Date(filterDateRange.end);
+
+        const matchesMinAmount =
+          !filterAmountRange.min || t.amount >= Number(filterAmountRange.min);
+
+        const matchesMaxAmount =
+          !filterAmountRange.max || t.amount <= Number(filterAmountRange.max);
+
+        return (
+          matchesSearch &&
+          matchesType &&
+          matchesStartDate &&
+          matchesEndDate &&
+          matchesMinAmount &&
+          matchesMaxAmount
+        );
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [transactions, searchTerm, typeFilter, filterDateRange, filterAmountRange]);
 
-  // Phân trang
   const paginatedTransactions = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredTransactions.slice(start, start + itemsPerPage);
   }, [filteredTransactions, currentPage]);
 
-  const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / itemsPerPage));
+  const averageAmount =
+    filteredTransactions.length > 0
+      ? Math.round(
+          filteredTransactions.reduce((sum, item) => sum + item.amount, 0) / filteredTransactions.length
+        )
+      : 0;
 
-  // Mở form thêm mới
   const handleOpenAddForm = () => {
     setEditingTransaction(null);
     setFormData({
       description: "",
       amount: 0,
       type: "expense",
-      categoryId: CATEGORIES[0].id,
+      categoryId: categories[0]?.id || CATEGORIES[0].id,
       date: new Date().toISOString().split("T")[0],
     });
     setIsFormOpen(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Mở form chỉnh sửa
   const handleOpenEditForm = (transaction: Transaction) => {
     setEditingTransaction(transaction);
     setFormData({
@@ -229,458 +238,577 @@ export default function Transactions() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Xóa giao dịch
   const handleDelete = (id: string) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa giao dịch này?")) {
-      setTransactions(transactions.filter((t) => t.id !== id));
-      showToast("Đã xóa giao dịch", "success");
-    }
+    const confirmed = window.confirm("Bạn có chắc chắn muốn xóa giao dịch này?");
+    if (!confirmed) return;
+
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    showToast("Đã xóa giao dịch", "success");
   };
 
-  // Lưu (thêm mới hoặc cập nhật)
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (!formData.description.trim()) {
       showToast("Vui lòng nhập mô tả giao dịch", "error");
       return;
     }
+
     if (formData.amount <= 0) {
       showToast("Số tiền phải lớn hơn 0", "error");
       return;
     }
 
     if (editingTransaction) {
-      // Cập nhật
-      setTransactions(
-        transactions.map((t) =>
+      setTransactions((prev) =>
+        prev.map((t) =>
           t.id === editingTransaction.id
-            ? { ...t, ...formData }
+            ? {
+                ...t,
+                ...formData,
+              }
             : t
         )
       );
       showToast("Đã cập nhật giao dịch", "success");
     } else {
-      // Thêm mới
       const newTransaction: Transaction = {
         ...formData,
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).slice(2, 11),
         idCode: `TR-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
         user: { name: "Hải", avatar: "H" },
       };
-      setTransactions([newTransaction, ...transactions]);
+
+      setTransactions((prev) => [newTransaction, ...prev]);
       showToast("Đã thêm giao dịch mới", "success");
     }
+
     setIsFormOpen(false);
     setEditingTransaction(null);
   };
 
-  // Thêm danh mục mới
-  const handleAddCategory = (e: React.FormEvent) => {
+  const handleAddCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!newCategoryData.name.trim()) return;
+
+    if (!newCategoryData.name.trim()) {
+      showToast("Vui lòng nhập tên danh mục", "error");
+      return;
+    }
+
     const newCat: Category = {
-      id: "cat-" + Math.random().toString(36).substr(2, 5),
+      id: "cat-" + Math.random().toString(36).slice(2, 7),
       ...newCategoryData,
     };
-    setCategories([...categories, newCat]);
-    setFormData({ ...formData, categoryId: newCat.id });
+
+    setCategories((prev) => [...prev, newCat]);
+    setFormData((prev) => ({ ...prev, categoryId: newCat.id }));
     setIsCategoryFormOpen(false);
-    setNewCategoryData({ name: "", icon: "📦", color: "bg-slate-100 text-slate-600" });
+    setNewCategoryData({
+      name: "",
+      icon: "📦",
+      color: "bg-slate-100 text-slate-600",
+    });
     showToast("Đã thêm danh mục mới", "success");
   };
 
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <section className="rounded-3xl bg-white p-6 shadow-sm">
+          <div className="animate-pulse space-y-4">
+            <div className="h-6 w-48 rounded bg-slate-200" />
+            <div className="h-4 w-72 rounded bg-slate-200" />
+          </div>
+        </section>
+
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="rounded-3xl bg-white p-5 shadow-sm">
+              <div className="animate-pulse space-y-3">
+                <div className="h-4 w-24 rounded bg-slate-200" />
+                <div className="h-7 w-32 rounded bg-slate-200" />
+              </div>
+            </div>
+          ))}
+        </section>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* ========== N1DCK-23: BỐ CỤC & THẺ TỔNG QUAN ========== */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+    <div className="space-y-6">
+      {toast && (
+        <div
+          className={`rounded-2xl border px-4 py-3 text-sm font-medium shadow-sm ${
+            toast.type === "success"
+              ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
+
+      <section className="rounded-3xl bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">Giao dịch</h3>
+            <p className="mt-2 text-sm text-slate-500">
+              Quản lý danh sách giao dịch thu và chi của bạn.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setIsAdvancedFilterOpen((prev) => !prev)}
+              className="rounded-3xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              {isAdvancedFilterOpen ? "Ẩn bộ lọc" : "Bộ lọc nâng cao"}
+            </button>
+
+            <button
+              onClick={handleOpenAddForm}
+              className="rounded-3xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+            >
+              Thêm giao dịch
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-3xl bg-white p-6 shadow-sm">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-3xl bg-slate-50 p-5">
             <p className="text-sm font-medium text-slate-500">Tổng thu nhập</p>
-            <p className="text-2xl font-bold text-emerald-600 mt-1">{formatCurrency(summary.income)}</p>
+            <p className="mt-3 text-2xl font-semibold text-emerald-600">
+              {formatCurrency(summary.income)}
+            </p>
           </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-            <p className="text-sm font-medium text-slate-500">Tổng chi tiêu</p>
-            <p className="text-2xl font-bold text-rose-500 mt-1">{formatCurrency(summary.expense)}</p>
+
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-sm font-medium text-slate-500">Tổng chi</p>
+            <p className="mt-3 text-2xl font-semibold text-rose-600">
+              {formatCurrency(summary.expense)}
+            </p>
           </div>
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-            <p className="text-sm font-medium text-slate-500">Số dư</p>
-            <p className={`text-2xl font-bold mt-1 ${summary.income - summary.expense >= 0 ? "text-indigo-600" : "text-rose-600"}`}>
-              {formatCurrency(summary.income - summary.expense)}
+
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-sm font-medium text-slate-500">Số giao dịch</p>
+            <p className="mt-3 text-2xl font-semibold text-slate-900">
+              {filteredTransactions.length}
+            </p>
+          </div>
+
+          <div className="rounded-3xl bg-slate-50 p-5">
+            <p className="text-sm font-medium text-slate-500">Mức trung bình</p>
+            <p className="mt-3 text-2xl font-semibold text-slate-900">
+              {formatCurrency(averageAmount)}
             </p>
           </div>
         </div>
+      </section>
 
-        {/* Header + Nút thêm */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h1 className="text-2xl font-bold text-slate-800">Quản lý giao dịch</h1>
-          {!isFormOpen && (
-            <button
-              onClick={handleOpenAddForm}
-              className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2"
+      <section className="rounded-3xl bg-white p-6 shadow-sm">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Tìm kiếm</label>
+            <input
+              type="text"
+              placeholder="Nhập mô tả hoặc mã giao dịch..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-400"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700">Loại giao dịch</label>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as TransactionType | "all")}
+              className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-indigo-400"
             >
-              <span className="text-xl">+</span> Thêm giao dịch
+              <option value="all">Tất cả</option>
+              <option value="income">Thu nhập</option>
+              <option value="expense">Chi tiêu</option>
+            </select>
+          </div>
+
+          <div className="flex items-end">
+            <button
+              onClick={() => {
+                setSearchTerm("");
+                setTypeFilter("all");
+                setFilterDateRange({ start: "", end: "" });
+                setFilterAmountRange({ min: 0, max: 0 });
+              }}
+              className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              Xóa bộ lọc
             </button>
-          )}
+          </div>
+
+          <div className="flex items-end">
+            <button
+              onClick={() => setIsCategoryFormOpen((prev) => !prev)}
+              className="w-full rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
+            >
+              {isCategoryFormOpen ? "Ẩn form danh mục" : "Thêm danh mục"}
+            </button>
+          </div>
         </div>
 
-        {/* ========== N1DCK-25: FORM THÊM / SỬA (INLINE) ========== */}
-        {isFormOpen && (
-          <div className="bg-white rounded-2xl shadow-md border-2 border-indigo-100 p-5 animate-in fade-in slide-in-from-top-4 duration-300">
-            <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-bold text-slate-800">
-                {editingTransaction ? "Chỉnh sửa giao dịch" : "Thêm giao dịch mới"}
-              </h2>
-              <button
-                onClick={() => setIsFormOpen(false)}
-                className="text-slate-400 hover:text-slate-600 bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center"
-              >
-                ✕
-              </button>
-            </div>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div className="md:col-span-2">
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Mô tả</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
-                  placeholder="Ví dụ: Mua sắm, lương, ..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Số tiền (₫)</label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
-                  value={formData.amount || ""}
-                  onChange={(e) => setFormData({ ...formData, amount: Number(e.target.value) })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Ngày</label>
-                <input
-                  type="date"
-                  required
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Loại</label>
-                <select
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as TransactionType })}
-                >
-                  <option value="expense">💸 Chi tiêu</option>
-                  <option value="income">💰 Thu nhập</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Danh mục</label>
-                <div className="flex gap-2">
-                  <select
-                    className="flex-1 rounded-xl border border-slate-200 px-4 py-3 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
-                    value={formData.categoryId}
-                    onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.icon} {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => setIsCategoryFormOpen(true)}
-                    className="bg-slate-100 text-slate-600 px-3 rounded-xl hover:bg-slate-200 transition text-xl"
-                    title="Thêm danh mục mới"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <div className="md:col-span-2 flex gap-3 justify-end">
-                <button
-                  type="button"
-                  onClick={() => setIsFormOpen(false)}
-                  className="px-6 py-2 rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 transition"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 rounded-xl bg-slate-800 text-white font-semibold hover:bg-slate-700 transition shadow"
-                >
-                  {editingTransaction ? "Cập nhật" : "Thêm mới"}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* ========== N1DCK-26: BỘ LỌC & TÌM KIẾM ========== */}
-        <div className="space-y-4">
-          <div className="bg-white rounded-2xl shadow-sm p-4 flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+        {isAdvancedFilterOpen && (
+          <div className="mt-5 grid gap-4 rounded-3xl bg-slate-50 p-4 md:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Từ ngày</label>
               <input
-                type="text"
-                placeholder="Tìm kiếm theo mô tả..."
-                className="w-full rounded-xl border border-slate-200 py-2.5 pl-10 pr-4 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 outline-none transition"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                type="date"
+                value={filterDateRange.start}
+                onChange={(e) =>
+                  setFilterDateRange((prev) => ({ ...prev, start: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
               />
             </div>
-            <div className="flex gap-2">
-              {(["all", "expense", "income"] as const).map((type) => (
-                <button
-                  key={type}
-                  onClick={() => setTypeFilter(type)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition ${
-                    typeFilter === type
-                      ? "bg-indigo-600 text-white shadow"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {type === "all" ? "Tất cả" : type === "expense" ? "Chi tiêu" : "Thu nhập"}
-                </button>
-              ))}
-              <button
-                onClick={() => setIsAdvancedFilterOpen(!isAdvancedFilterOpen)}
-                className={`p-2 rounded-xl border transition ${
-                  isAdvancedFilterOpen ? "bg-indigo-50 border-indigo-200 text-indigo-600" : "bg-white border-slate-200 text-slate-400"
-                }`}
-                title="Bộ lọc nâng cao"
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Đến ngày</label>
+              <input
+                type="date"
+                value={filterDateRange.end}
+                onChange={(e) =>
+                  setFilterDateRange((prev) => ({ ...prev, end: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Số tiền tối thiểu</label>
+              <input
+                type="number"
+                min={0}
+                value={filterAmountRange.min || ""}
+                onChange={(e) =>
+                  setFilterAmountRange((prev) => ({
+                    ...prev,
+                    min: Number(e.target.value) || 0,
+                  }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Số tiền tối đa</label>
+              <input
+                type="number"
+                min={0}
+                value={filterAmountRange.max || ""}
+                onChange={(e) =>
+                  setFilterAmountRange((prev) => ({
+                    ...prev,
+                    max: Number(e.target.value) || 0,
+                  }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+              />
+            </div>
+          </div>
+        )}
+      </section>
+
+      {isFormOpen && (
+        <section className="rounded-3xl bg-white p-6 shadow-sm">
+          <div className="mb-5 flex items-center justify-between">
+            <h4 className="text-base font-semibold text-slate-900">
+              {editingTransaction ? "Chỉnh sửa giao dịch" : "Thêm giao dịch mới"}
+            </h4>
+            <button
+              onClick={() => {
+                setIsFormOpen(false);
+                setEditingTransaction(null);
+              }}
+              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+            >
+              Đóng
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-slate-700">Mô tả</label>
+              <input
+                type="text"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, description: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+                placeholder="Nhập mô tả giao dịch"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Số tiền</label>
+              <input
+                type="number"
+                min={0}
+                value={formData.amount || ""}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, amount: Number(e.target.value) }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+                placeholder="Nhập số tiền"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Loại</label>
+              <select
+                value={formData.type}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    type: e.target.value as TransactionType,
+                  }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
               >
-                ⚙️
+                <option value="expense">Chi tiêu</option>
+                <option value="income">Thu nhập</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Danh mục</label>
+              <select
+                value={formData.categoryId}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, categoryId: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.icon} {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Ngày</label>
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, date: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+              />
+            </div>
+
+            <div className="md:col-span-2 flex gap-3">
+              <button
+                type="submit"
+                className="rounded-2xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
+              >
+                {editingTransaction ? "Lưu thay đổi" : "Thêm giao dịch"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setIsFormOpen(false);
+                  setEditingTransaction(null);
+                }}
+                className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              >
+                Hủy
               </button>
             </div>
-          </div>
+          </form>
+        </section>
+      )}
 
-          {/* Form Bộ lọc nâng cao */}
-          {isAdvancedFilterOpen && (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 animate-in fade-in zoom-in duration-200">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Từ ngày</label>
-                  <input
-                    type="date"
-                    className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-100"
-                    value={filterDateRange.start}
-                    onChange={(e) => setFilterDateRange({ ...filterDateRange, start: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Đến ngày</label>
-                  <input
-                    type="date"
-                    className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-100"
-                    value={filterDateRange.end}
-                    onChange={(e) => setFilterDateRange({ ...filterDateRange, end: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Tiền tối thiểu</label>
-                  <input
-                    type="number"
-                    placeholder="0 ₫"
-                    className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-100"
-                    value={filterAmountRange.min || ""}
-                    onChange={(e) => setFilterAmountRange({ ...filterAmountRange, min: Number(e.target.value) })}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-400 uppercase mb-1">Tiền tối đa</label>
-                  <input
-                    type="number"
-                    placeholder="Không giới hạn"
-                    className="w-full rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-100"
-                    value={filterAmountRange.max || ""}
-                    onChange={(e) => setFilterAmountRange({ ...filterAmountRange, max: Number(e.target.value) })}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end mt-4">
-                <button
-                  onClick={() => {
-                    setFilterDateRange({ start: "", end: "" });
-                    setFilterAmountRange({ min: 0, max: 0 });
-                  }}
-                  className="text-sm font-semibold text-rose-500 hover:underline"
-                >
-                  Xóa bộ lọc nâng cao
-                </button>
-              </div>
+      {isCategoryFormOpen && (
+        <section className="rounded-3xl bg-white p-6 shadow-sm">
+          <h4 className="mb-5 text-base font-semibold text-slate-900">Thêm danh mục mới</h4>
+
+          <form onSubmit={handleAddCategory} className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Tên danh mục</label>
+              <input
+                type="text"
+                value={newCategoryData.name}
+                onChange={(e) =>
+                  setNewCategoryData((prev) => ({ ...prev, name: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+                placeholder="Ví dụ: Học tập"
+              />
             </div>
-          )}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Icon</label>
+              <input
+                type="text"
+                value={newCategoryData.icon}
+                onChange={(e) =>
+                  setNewCategoryData((prev) => ({ ...prev, icon: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+                placeholder="Ví dụ: 📚"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-slate-700">Màu</label>
+              <select
+                value={newCategoryData.color}
+                onChange={(e) =>
+                  setNewCategoryData((prev) => ({ ...prev, color: e.target.value }))
+                }
+                className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-indigo-400"
+              >
+                <option value="bg-slate-100 text-slate-600">Xám</option>
+                <option value="bg-indigo-100 text-indigo-600">Indigo</option>
+                <option value="bg-emerald-100 text-emerald-600">Xanh lá</option>
+                <option value="bg-rose-100 text-rose-600">Hồng đỏ</option>
+                <option value="bg-amber-100 text-amber-600">Vàng</option>
+              </select>
+            </div>
+
+            <div className="md:col-span-3">
+              <button
+                type="submit"
+                className="rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                Lưu danh mục
+              </button>
+            </div>
+          </form>
+        </section>
+      )}
+
+      <section className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm">
+        <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <h4 className="text-base font-semibold text-slate-900">Chi tiết giao dịch</h4>
+          <p className="text-sm text-slate-500">
+            Trang {currentPage}/{totalPages}
+          </p>
         </div>
 
-        {/* ========== N1DCK-24: DANH SÁCH GIAO DỊCH ========== */}
-        {/* ========== N1DCK-27: TRẠNG THÁI LOADING & EMPTY ========== */}
-        <div className="space-y-3">
-          {isLoading ? (
-            // Skeleton loading
-            Array.from({ length: 4 }).map((_, idx) => (
-              <div key={idx} className="bg-white rounded-2xl p-5 shadow-sm animate-pulse">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-200"></div>
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-                    <div className="h-3 bg-slate-100 rounded w-1/4"></div>
-                  </div>
-                  <div className="h-6 w-24 bg-slate-200 rounded"></div>
-                </div>
-              </div>
-            ))
-          ) : filteredTransactions.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
-              <span className="text-6xl opacity-30">📭</span>
-              <p className="text-xl font-semibold text-slate-700 mt-4">Không có giao dịch nào</p>
-              <p className="text-slate-500 mt-1">Hãy thêm giao dịch đầu tiên hoặc thay đổi bộ lọc</p>
+        <div className="space-y-4">
+          {paginatedTransactions.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+              <p className="text-sm font-medium text-slate-600">Không có giao dịch phù hợp.</p>
             </div>
           ) : (
-            <>
-              {paginatedTransactions.map((transaction) => {
-                const category = getCategory(transaction.categoryId);
-                return (
-                  <div
-                    key={transaction.id}
-                    className="group bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all border border-slate-100 relative overflow-hidden"
-                  >
-                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${transaction.type === "expense" ? "bg-rose-400" : "bg-emerald-400"}`}></div>
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl ${category.color}`}>
-                          {category.icon}
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-slate-800">{transaction.description}</h3>
-                          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400 mt-1">
-                            <span className="bg-slate-100 px-2 py-0.5 rounded-full">📄 {transaction.idCode}</span>
-                            <span>📅 {new Date(transaction.date).toLocaleDateString("vi-VN")}</span>
-                            <span>{category.icon} {category.name}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between sm:justify-end gap-4">
-                        <span className={`text-lg font-black ${transaction.type === "expense" ? "text-rose-500" : "text-emerald-600"}`}>
-                          {transaction.type === "expense" ? "-" : "+"} {formatCurrency(transaction.amount)}
-                        </span>
-                        <div className="flex items-center gap-2 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition">
-                          <button
-                            onClick={() => handleOpenEditForm(transaction)}
-                            className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-indigo-600"
-                            title="Sửa"
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            onClick={() => handleDelete(transaction.id)}
-                            className="p-2 rounded-xl hover:bg-slate-100 text-slate-500 hover:text-rose-600"
-                            title="Xóa"
-                          >
-                            🗑️
-                          </button>
-                          <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-sm font-bold text-indigo-700">
-                            {transaction.user.avatar}
-                          </div>
-                        </div>
-                      </div>
+            paginatedTransactions.map((item) => {
+              const category = getCategory(item.categoryId);
+
+              return (
+                <div
+                  key={item.id}
+                  className="flex flex-col gap-4 rounded-3xl border border-slate-200/80 bg-slate-50 p-4 lg:flex-row lg:items-center lg:justify-between"
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`flex h-12 w-12 items-center justify-center rounded-2xl text-lg ${category.color}`}
+                    >
+                      {category.icon}
+                    </div>
+
+                    <div className="space-y-1">
+                      <p className="text-sm font-semibold text-slate-900">{item.description}</p>
+                      <p className="text-xs text-slate-500">
+                        {item.idCode} • {item.date} • {category.name}
+                      </p>
+                      <p className="text-xs text-slate-400">Người tạo: {item.user.name}</p>
                     </div>
                   </div>
-                );
-              })}
 
-              {/* Phân trang */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-6">
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition"
-                  >
-                    ← Trước
-                  </button>
-                  <span className="text-sm text-slate-600">
-                    Trang {currentPage} / {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition"
-                  >
-                    Sau →
-                  </button>
+                  <div className="flex flex-col items-start gap-3 lg:items-end">
+                    <p
+                      className={`text-sm font-semibold ${
+                        item.type === "income" ? "text-emerald-600" : "text-rose-600"
+                      }`}
+                    >
+                      {item.type === "income" ? "+" : "-"} {formatCurrency(item.amount)}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          item.type === "income"
+                            ? "bg-emerald-100 text-emerald-700"
+                            : "bg-rose-100 text-rose-700"
+                        }`}
+                      >
+                        {item.type === "income" ? "Thu nhập" : "Chi tiêu"}
+                      </span>
+
+                      <button
+                        onClick={() => handleOpenEditForm(item)}
+                        className="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-700 transition hover:bg-slate-300"
+                      >
+                        Sửa
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700 transition hover:bg-red-200"
+                      >
+                        Xóa
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </>
+              );
+            })
           )}
         </div>
-      </div>
 
-      {/* ========== TOAST NOTIFICATION ========== */}
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-300">
-          <div className={`flex items-center gap-3 rounded-2xl px-5 py-3 shadow-xl text-white font-semibold ${toast.type === "success" ? "bg-green-600" : "bg-red-600"}`}>
-            <span>{toast.type === "success" ? "✅" : "❌"}</span>
-            <span>{toast.message}</span>
-          </div>
-        </div>
-      )}
+        {totalPages > 1 && (
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Trước
+            </button>
 
-      {/* ========== FORM THÊM NHANH DANH MỤC ========== */}
-      {isCategoryFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm animate-in zoom-in fade-in duration-200">
-            <h3 className="text-xl font-bold text-slate-800 mb-4 text-center">Thêm danh mục mới</h3>
-            <form onSubmit={handleAddCategory} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Tên danh mục</label>
-                <input
-                  type="text"
-                  required
-                  autoFocus
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-100"
-                  placeholder="Ví dụ: Du lịch, Sức khỏe..."
-                  value={newCategoryData.name}
-                  onChange={(e) => setNewCategoryData({ ...newCategoryData, name: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Icon (Emoji)</label>
-                <input
-                  type="text"
-                  required
-                  className="w-full rounded-xl border border-slate-200 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-100 text-center text-2xl"
-                  value={newCategoryData.icon}
-                  onChange={(e) => setNewCategoryData({ ...newCategoryData, icon: e.target.value })}
-                />
-              </div>
-              <div className="flex gap-3 pt-2">
+            {Array.from({ length: totalPages }).map((_, index) => {
+              const page = index + 1;
+              return (
                 <button
-                  type="button"
-                  onClick={() => setIsCategoryFormOpen(false)}
-                  className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition"
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`rounded-2xl px-4 py-2 text-sm font-semibold ${
+                    currentPage === page
+                      ? "bg-indigo-600 text-white"
+                      : "border border-slate-200 text-slate-700"
+                  }`}
                 >
-                  Hủy
+                  {page}
                 </button>
-                <button
-                  type="submit"
-                  className="flex-1 py-3 rounded-xl bg-slate-900 text-white font-bold hover:bg-slate-800 transition shadow-lg"
-                >
-                  Thêm ngay
-                </button>
-              </div>
-            </form>
+              );
+            })}
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Sau
+            </button>
           </div>
-        </div>
-      )}
+        )}
+      </section>
     </div>
   );
 }
